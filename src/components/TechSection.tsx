@@ -1,6 +1,8 @@
 import React, { useState, Suspense, use } from 'react';
+import TechCard from './TechCard';
 
 const techDataPromise = fetch('/data.json').then((res) => res.json());
+
 
 const TechContent = ({ stack, onAdd, onRemove }) => {
   
@@ -8,21 +10,13 @@ const TechContent = ({ stack, onAdd, onRemove }) => {
 
   return (
     <div className="flex flex-col lg:flex-row gap-8">
-      {/* TEMPORARY TECHNOLOGIES GRID */}
+    
       <div className="flex-grow grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {technologiesData.map((tech) => (
-          <div key={tech.id} className="p-4 border border-gray-200 rounded-lg shadow-sm">
-            <h3 className="font-bold text-lg">{tech.name}</h3>
-            <p className="text-sm text-gray-500">{tech.category}</p>
-            <button 
-              onClick={() => onAdd(tech)}
-              className="mt-4 bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-            >
-              Add to Stack
-            </button>
-          </div>
+          <TechCard key={tech.id} tech={tech} onAdd={onAdd} />
         ))}
       </div>
+
       <div className="w-full lg:w-[350px] flex-shrink-0 bg-gray-50 p-6 border border-gray-200 rounded-xl h-fit sticky top-4">
         <h3 className="font-bold text-xl mb-4">Your Stack ({stack.length})</h3>
         {stack.length === 0 ? (
@@ -63,6 +57,7 @@ const TechSection = () => {
         </h2>
         <p className="text-gray-500">Pick one technology per category to build your ideal stack.</p>
       </div>
+
       <Suspense fallback={<div className="flex justify-center py-20"><span className="loading loading-spinner loading-lg text-pink-500"></span></div>}>
         <TechContent stack={stack} onAdd={handleAdd} onRemove={handleRemove} />
       </Suspense>
