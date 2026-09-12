@@ -1,34 +1,23 @@
 import React, { useState, Suspense, use } from 'react';
+import { toast } from 'react-toastify';
 import TechCard from './TechCard';
+import YourStack from './YourStack';
 
 const techDataPromise = fetch('/data.json').then((res) => res.json());
 
-
-const TechContent = ({ stack, onAdd, onRemove }) => {
-  
+const TechContent = ({ stack, onAdd, onRemove, onClear }) => {
   const technologiesData = use(techDataPromise);
 
   return (
     <div className="flex flex-col lg:flex-row gap-8">
-    
       <div className="flex-grow grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {technologiesData.map((tech) => (
           <TechCard key={tech.id} tech={tech} onAdd={onAdd} />
         ))}
       </div>
 
-      <div className="w-full lg:w-[350px] flex-shrink-0 bg-gray-50 p-6 border border-gray-200 rounded-xl h-fit sticky top-4">
-        <h3 className="font-bold text-xl mb-4">Your Stack ({stack.length})</h3>
-        {stack.length === 0 ? (
-          <p className="text-sm text-gray-400 border-2 border-dashed border-gray-200 p-4 rounded-lg text-center">Empty</p>
-        ) : (
-          stack.map((item) => (
-            <div key={item.id} className="flex justify-between items-center bg-white p-3 mb-2 border border-gray-100 rounded-lg shadow-sm">
-              <span className="text-sm font-medium">{item.name}</span>
-              <button onClick={() => onRemove(item.id)} className="text-red-400 hover:text-red-600 font-bold">✕</button>
-            </div>
-          ))
-        )}
+      <div className="w-full lg:w-[350px] flex-shrink-0">
+        <YourStack stack={stack} onRemove={onRemove} onClear={onClear} />
       </div>
     </div>
   );
@@ -39,14 +28,21 @@ const TechSection = () => {
 
   const handleAdd = (tech) => {
     if (stack.find((item) => item.id === tech.id)) {
-      alert(`${tech.name} is already in your stack!`);
+      toast.warning(`${tech.name} is already in your stack!`);
       return;
     }
     setStack([...stack, tech]);
+    toast.success(`${tech.name} added to your stack!`);
   };
 
   const handleRemove = (id) => {
     setStack(stack.filter((item) => item.id !== id));
+    toast.info('Technology removed.');
+  };
+
+  const handleClear = () => {
+    setStack([]);
+    toast.error('Stack cleared.');
   };
 
   return (
@@ -59,7 +55,7 @@ const TechSection = () => {
       </div>
 
       <Suspense fallback={<div className="flex justify-center py-20"><span className="loading loading-spinner loading-lg text-pink-500"></span></div>}>
-        <TechContent stack={stack} onAdd={handleAdd} onRemove={handleRemove} />
+        <TechContent stack={stack} onAdd={handleAdd} onRemove={handleRemove} onClear={handleClear} />
       </Suspense>
     </div>
   );
