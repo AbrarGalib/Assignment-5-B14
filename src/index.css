@@ -1,2 +1,9 @@
 @import "tailwindcss";
 @plugin "daisyui";
+@utility brand-gradient-bg {
+  background-image: linear-gradient(to right, var(--color-orange-500), var(--color-pink-500), var(--color-purple-600));
+}
+
+@utility brand-gradient-text {
+  @apply bg-clip-text text-transparent brand-gradient-bg;
+}

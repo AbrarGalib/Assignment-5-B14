@@ -1,8 +1,15 @@
 import React from 'react';
+import type { Technology } from './TechCard';
 
-const YourStack = ({ stack, onRemove, onClear }) => {
+interface YourStackProps {
+  stack: Technology[];
+  onRemove: (id: string) => void;
+  onClear: () => void;
+}
+
+const YourStack = ({ stack, onRemove, onClear }: YourStackProps) => {
   return (
-    <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 sticky top-4">
+    <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 sticky top-24">
       <h3 className="text-xl font-bold text-gray-900 mb-1">Your Stack</h3>
       <p className="text-sm text-gray-500 mb-6">
         {stack.length > 0 ? `${stack.length} Technology Selected` : 'No technologies selected yet.'}

@@ -1,18 +1,31 @@
 import React, { useState, Suspense, use } from 'react';
 import { toast } from 'react-toastify';
 import TechCard from './TechCard';
+import type { Technology } from './TechCard';
 import YourStack from './YourStack';
 
 const techDataPromise = fetch('/data.json').then((res) => res.json());
 
-const TechContent = ({ stack, onAdd, onRemove, onClear }) => {
-  const technologiesData = use(techDataPromise);
+interface TechContentProps {
+  stack: Technology[];
+  onAdd: (tech: Technology) => void;
+  onRemove: (id: string) => void;
+  onClear: () => void;
+}
+
+const TechContent = ({ stack, onAdd, onRemove, onClear }: TechContentProps) => {
+  const technologiesData = use<Technology[]>(techDataPromise);
 
   return (
     <div className="flex flex-col lg:flex-row gap-8">
       <div className="flex-grow grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {technologiesData.map((tech) => (
-          <TechCard key={tech.id} tech={tech} onAdd={onAdd} />
+          <TechCard 
+            key={tech.id} 
+            tech={tech} 
+            onAdd={onAdd} 
+            isAdded={stack.some((item) => item.id === tech.id)} 
+          />
         ))}
       </div>
 
@@ -24,9 +37,9 @@ const TechContent = ({ stack, onAdd, onRemove, onClear }) => {
 };
 
 const TechSection = () => {
-  const [stack, setStack] = useState([]);
+  const [stack, setStack] = useState<Technology[]>([]);
 
-  const handleAdd = (tech) => {
+  const handleAdd = (tech: Technology) => {
     if (stack.find((item) => item.id === tech.id)) {
       toast.warning(`${tech.name} is already in your stack!`);
       return;
@@ -35,7 +48,7 @@ const TechSection = () => {
     toast.success(`${tech.name} added to your stack!`);
   };
 
-  const handleRemove = (id) => {
+  const handleRemove = (id: string) => {
     setStack(stack.filter((item) => item.id !== id));
     toast.info('Technology removed.');
   };
